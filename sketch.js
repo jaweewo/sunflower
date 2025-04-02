@@ -1,60 +1,53 @@
 function setup() {
     createCanvas(400, 400);
-    background(255);
-
-    // Dibujamos el girasol en el centro
-    drawSunflower(width / 2, height / 2);
+    background(0);  // Fondo negro
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    // Generamos los pétalos
+    generatePetals();
+    // Generamos el centro de la flor
+    generateCenter();
 }
 
-function drawSunflower(x, y) {
-    let petalCount = 25;  // Más pétalos
-    let petalLength = 90;  // Longitud de los pétalos
-    let petalWidth = 40;   // Ancho de los pétalos
-
-    // Dibujamos el centro del girasol (más detallado)
-    drawCenter(x, y);
-
-    // Dibujamos los pétalos
-    for (let i = 0; i < petalCount; i++) {
-        let angle = map(i, 0, petalCount, 0, TWO_PI);
-        let petalX = x + cos(angle) * 30;
-        let petalY = y + sin(angle) * 30;
-
-        drawPetal(petalX, petalY, angle, petalLength, petalWidth);
-    }
-
-    // Dibujamos el tallo
-    drawStem(x, y + 20, 120, 15);
-}
-
-function drawCenter(x, y) {
-    noStroke();
-    fill(150, 75, 0); // Color marrón del centro
-    ellipse(x, y, 60, 60);  // Centro grande
-
-    // Detalles del centro (textura)
-    fill(100, 50, 0);
-    for (let i = 0; i < 40; i++) {
-        let angle = random(TWO_PI);
-        let r = random(25, 30);
-        let px = x + cos(angle) * r;
-        let py = y + sin(angle) * r;
-        ellipse(px, py, random(4, 6), random(4, 6));  // Crear una textura más orgánica
+function generatePetals() {
+    let h = 0;  // Hue del color
+    translate(width / 2, height / 2); // Centrar el dibujo
+    for (let i = 0; i < 16; i++) {
+        for (let j = 0; j < 18; j++) {
+            let c = color(hueToRGB(h), 255, 255); // Color en espacio HSV
+            stroke(c);
+            rotate(PI / 9); // Rotamos un poco para crear los pétalos
+            drawPetal(150 - j * 6);
+            h += 0.125; // Aumentamos el tono de color
+        }
+        rotate(PI / 8); // Vuelta ligera para distribuir los pétalos
     }
 }
 
-function drawPetal(x, y, angle, length, width) {
+function generateCenter() {
     push();
-    translate(x, y);
-    rotate(angle);
-    fill(255, 204, 0);  // Color amarillo brillante
+    fill(139, 69, 19);  // Color marrón para el centro
     noStroke();
-    ellipse(0, 0, width, length);
+    let phi = radians(137.508);  // Ángulo phi en radianes
+    for (let i = 0; i < 200; i++) {
+        let r = 4 * sqrt(i);
+        let theta = i * phi;
+        let x = r * cos(theta);
+        let y = r * sin(theta);
+        ellipse(x, y, 2, 2);  // Dibujamos cada punto en el centro
+    }
     pop();
 }
 
-function drawStem(x, y, length, width) {
-    fill(34, 139, 34);  // Color verde para el tallo
-    noStroke();
-    rect(x - width / 2, y, width, length);  // Tallo rectangular
+function drawPetal(radius) {
+    for (let i = 0; i < 2; i++) {
+        ellipse(0, -radius, 150, 90); // Dibujamos los dos semi-pétalos
+        rotate(PI); // Giramos 180 grados
+    }
+}
+
+// Función para convertir el valor HSV a RGB
+function hueToRGB(hue) {
+    return color(hue * 360, 100, 100);  // Ajustamos la conversión de HSV a RGB
 }
